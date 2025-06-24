@@ -1,5 +1,4 @@
 # FC_Battery_Dashboard_REV6.py (Updated Full Version with Tank Selection, Expanders, PDF)
-import tempfile
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -175,12 +174,8 @@ colg1, colg2 = st.columns(2)
 colg1.plotly_chart(fig_batt, use_container_width=True)
 colg2.plotly_chart(fig_eff, use_container_width=True)
 
-# Create safely temp files and save them for the PDF report
-tmp_batt = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-tmp_eff = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-
-fig_batt.write_image(tmp_batt.name)
-fig_eff.write_image(tmp_eff.name)
+fig_batt.write_image("/tmp/battery_gauge.png")
+fig_eff.write_image("/tmp/efficiency_gauge.png")
 
 
 # PDF Report
@@ -252,8 +247,9 @@ if st.button("Generate PDF Performance Report"):
         pdf.cell(200, 6, f"{row['Parameter']}: {row['Value']}", ln=True)
 
     pdf.ln(4)
-    pdf.image(tmp_batt.name, x=0, y=pdf.get_y(), w=110)
-    pdf.image(tmp_eff.name, x=103, y=pdf.get_y(), w=110)
+    pdf.image("/tmp/battery_gauge.png", x=0, y=pdf.get_y(), w=110)
+    pdf.image("/tmp/efficiency_gauge.png", x=103, y=pdf.get_y(), w=110)
+
 
 
     pdf.ln(62)
